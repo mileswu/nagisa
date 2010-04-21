@@ -9,8 +9,10 @@ class Controller < Autumn::Leaf
 		super
 
 		@stats = {}
+		Thread.abort_on_exception = true
 		Thread.new do
-			sleep 30
+			sleep 5
+			update_stats
 			while 1
 				sleep 60
 				update_stats
@@ -19,7 +21,7 @@ class Controller < Autumn::Leaf
 	end
 
 	def irc_rpl_whoreply_response(stem, sender, recipient, args, msg)
-		return if args[0] != "#delamoo" or args[2]["AnimeBytes"].nil?
+		return if stem.channel_members["#animebyt.es"][args[4]].nil? or args[2]["AnimeBytes"].nil?
 		update_state(args[1])
 	end
 
@@ -28,7 +30,7 @@ class Controller < Autumn::Leaf
 		#Does not work whaaaaay
 		puts "hi"
 		puts arguments.inspect
-		puts channel_members["#delamoo"].map { |i,j| i }.join(" ")
+		puts channel_members["#animebyt.es"].map { |i,j| i }.join(" ")
 	end
 	
 	def did_start_up
@@ -41,10 +43,10 @@ class Controller < Autumn::Leaf
 
 	def someone_did_join_channel(stem, sender, channel)
 		if(sender[:nick] == "Nagisa")
-			return if channel != "#delamoo"
+			return if channel != "#animebyt.es"
 			puts "Just joined a room. ZZZzz"
 			sleep 2
-			channel_members["#delamoo"].each_key do |i|
+			channel_members["#animebyt.es"].each_key do |i|
 				stem.who(i)
 			end
 			return
@@ -57,14 +59,15 @@ class Controller < Autumn::Leaf
 		uid = filter(sender, channel)
 		update_state(uid, :leave) if uid
 	end
-	def someone_did_quit(stem, person, msg)
-		puts person.inspect
+	def someone_did_quit(stem, sender, msg)
+		uid = filter(sender, channel)
+		update_state(uid, :leave) if uid
 	end
 
 	private
 
 	def filter(sender, channel)
-		return false if channel != "#delamoo"
+		return false if channel != "#animebyt.es"
 		if(sender[:host]["AnimeBytes"].nil?)
 			puts "Not identified to Nagisa"
 			return false
@@ -79,7 +82,7 @@ class Controller < Autumn::Leaf
 		else
 			@stats[uid][:left] = Time.now.to_i
 		end
-		Net::HTTP.get 'miku.animebyt.es', "/irc-notifier.php?action=status&uid=#{uid}&online=#{event == :join ? "1" : "0"}&auth=#{AUTH}"
+		Net::HTTP.post_form URI.parse("http://miku.animebyt.es/irc-notifier.php"), {"action" => "status", "uid" => uid, "online" => (event == :join ? "1" : "0"), "auth" => AUTH}
 	end
 
 	def update_stats
@@ -89,12 +92,14 @@ class Controller < Autumn::Leaf
 			if h[:left]
 				dt = h[:left] - h[:entered]
 				@stats.delete(k)
+				puts "delete #{k}"
 			else
 				dt = t - h[:entered]
 				h[:entered] = t
 			end	
 			out[k] = { "delta_time" => dt }
 		end
-		HTTP.post_form URI.parse("http://miku.animebyt.es/irc-notifier.php", { "stats" => out.to_json, "auth" => AUTH, "action" => "stats" }
+		puts out.to_json
+		Net::HTTP.post_form URI.parse("http://miku.animebyt.es/irc-notifier.php"), { "stats" => out.to_json, "auth" => AUTH, "action" => "stats" }
 	end
 end
