@@ -7,3 +7,19 @@ Scorekeeper:
   class: Scorekeeper
 Insulter: 
   class: Insulter
+Httptitle:
+  class: Httptitle
+Control:
+  class: Control
+Bash:
+  class: Bash
+ThreadNecro:
+  class: ThreadNecro
+Radio:
+  class: Radio
+Karaoke:
+  class: Karaoke
+Exec:
+  class: Exec
+Stats:
+  class: Stats

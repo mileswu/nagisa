@@ -1,2 +1,4 @@
---- 
-Scorekeeper: sqlite:leaves/scorekeeper/database.db
+---
+stats: 
+  adapter: sqlite3
+  database: leaves/stats/data/animebytes.db
