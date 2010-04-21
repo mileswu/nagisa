@@ -6,6 +6,7 @@ require 'cgi'
 require 'hpricot'
 require 'escape'
 require 'htmlentities'
+require 'idn'
 
 class Controller < Autumn::Leaf
 
@@ -94,8 +95,8 @@ private
 	end
 	if res and res[0] and base_res and base_res[0]
 	 url = res[0]
-	 #urlidn = IDN::Idna.toASCII(base_res[0][proto.length..-1])
-	 urlidn = base_res[0][proto.length..-1]
+	 urlidn = IDN::Idna.toASCII(base_res[0][proto.length..-1])
+	 #urlidn = base_res[0][proto.length..-1]
 	 url = proto + urlidn + url[base_res[0].length..-1]
 	 curb = Curl::Easy.new(url)
 	 #curb.headers["Accept-Encoding"] = ""
