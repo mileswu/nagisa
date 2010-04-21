@@ -5,6 +5,7 @@ require 'open-uri'
 require 'hpricot'
 require 'net/http'
 require 'uri'
+require 'oniguruma'
 
 class Controller < Autumn::Leaf
 	@@active = {}
@@ -49,8 +50,9 @@ class Controller < Autumn::Leaf
 	  timecodes.delete_if { |a| a[:time] < 0 }
 
 	  to_translate = []
+	  regex = ORegexp.new('\p{^ASCII}', 'i', 'utf8')
 	  timecodes.each_with_index do |i,j|
-		  if i[:line].match(/\p{^ASCII}/)
+		  if regex.match(i[:line])
 			  to_translate << {:index => j, :line => i[:line] }
 		  end
 	  end
