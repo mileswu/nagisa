@@ -60,7 +60,7 @@ class Controller < Autumn::Leaf
 		update_state(uid, :leave) if uid
 	end
 	def someone_did_quit(stem, sender, msg)
-		uid = filter(sender, channel)
+		uid = filter(sender, "#animebyt.es")
 		update_state(uid, :leave) if uid
 	end
 
@@ -80,6 +80,7 @@ class Controller < Autumn::Leaf
 		if event == :join
 			@stats[uid] = { :entered => Time.now.to_i, :left => nil }
 		else
+			return if @stats[uid].nil?
 			@stats[uid][:left] = Time.now.to_i
 		end
 		Net::HTTP.post_form URI.parse("http://miku.animebyt.es/irc-notifier.php"), {"action" => "status", "uid" => uid, "online" => (event == :join ? "1" : "0"), "auth" => AUTH}
