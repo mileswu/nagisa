@@ -20,7 +20,7 @@ class User
 end
 
 require 'riddle'
-$sphinx = Riddle::Client.new
+$sphinx = Riddle::Client.new "localhost", 3312
 
 class Permission
 	include DataMapper::Resource
