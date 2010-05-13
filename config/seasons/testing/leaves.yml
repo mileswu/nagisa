@@ -23,3 +23,5 @@ Exec:
   class: Exec
 Stats:
   class: Stats
+RSS:
+  class: RSS

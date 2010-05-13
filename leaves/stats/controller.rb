@@ -8,6 +8,7 @@ class Controller < Autumn::Leaf
 	def initialize(*args)
 		super
 
+		Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), {"action" => "clear", "auth" => AUTH}
 		@stats = {}
 		Thread.abort_on_exception = true
 		Thread.new do
@@ -83,7 +84,13 @@ class Controller < Autumn::Leaf
 			return if @stats[uid].nil?
 			@stats[uid][:left] = Time.now.to_i
 		end
-		Net::HTTP.post_form URI.parse("http://miku.animebyt.es/irc-notifier.php"), {"action" => "status", "uid" => uid, "online" => (event == :join ? "1" : "0"), "auth" => AUTH}
+		begin
+			Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), {"action" => "status", "uid" => uid, "online" => (event == :join ? "1" : "0"), "auth" => AUTH}
+		rescue
+			puts "HTTP failed"
+			sleep 30
+			update_state(uid, event)
+		end
 	end
 
 	def update_stats
@@ -101,6 +108,10 @@ class Controller < Autumn::Leaf
 			out[k] = { "delta_time" => dt }
 		end
 		puts out.to_json
-		Net::HTTP.post_form URI.parse("http://miku.animebyt.es/irc-notifier.php"), { "stats" => out.to_json, "auth" => AUTH, "action" => "stats" }
+		begin
+			Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), { "stats" => out.to_json, "auth" => AUTH, "action" => "stats" }
+		rescue
+			puts "HTTP failed"
+		end
 	end
 end
