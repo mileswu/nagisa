@@ -204,7 +204,7 @@ module Autumn
         end
         # Need to manually set the table names of the models because we loaded
         # them inside a module
-        unless Autumn::Config.no_database
+        unless true# Autumn::Config.no_database
           mod.constants.map { |const_name| mod.const_get(const_name) }.select { |const| const.ancestors.include? DataMapper::Resource }.each do |model|
             model.storage_names[leaf.database_name] = model.to_s.demodulize.snakecase.pluralize
           end
