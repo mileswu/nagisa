@@ -47,6 +47,18 @@ class Controller < Autumn::Leaf
 	end
 
 
+	def search_command(stem, sender, reply_to, msg)
+		return if msg.nil?
+
+
+		r = AnimeGroup.search_first("@SeriesNames #{msg}")
+		return "Nothing found" if r.nil?
+		tag_arr =  r.animetags.map {|t| t.name }
+		tag_arr.delete("")
+		tags = tag_arr.join(", ")
+
+		"#{r.series.name} - #{r.name} [#{r.year}] :: Tags: #{tags} :: http://animebyt.es/torrents.php?id=#{r.id} || https://yuki.animebyt.es/torrents.php?id=#{r.id}"
+	end
 
 
 end
