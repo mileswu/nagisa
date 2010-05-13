@@ -1,4 +1,0 @@
----
-stats: 
-  adapter: sqlite3
-  database: leaves/stats/data/animebytes.db
