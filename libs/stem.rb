@@ -220,7 +220,11 @@ module Autumn
         whois:   [param('server/nicks', list: true), param('nicks', list: true, required: false)],
         whowas:  [param('nick'), param('history count', required: false), param('server', required: false)],
 
-        pong:    [param('code', required: false, colonize: true)]
+        pong:    [param('code', required: false, colonize: true)],
+
+	chgident: [ param('name', :required => true), param('username', :required => true) ],
+	chghost:  [ param('name', :required => true), param('hostname', :required => true) ],
+	sajoin:   [ param('name', :required => true), param('rooms', :required => true) ]
     }
 
     # @return [String] The hostname of the server this stem is connected to.
