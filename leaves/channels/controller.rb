@@ -1,8 +1,14 @@
 # Controller for the Channels leaf.
 require 'action_view'
+require 'config'
 
 class Controller < Autumn::Leaf
 	include ActionView::Helpers::NumberHelper
+	def did_start_up
+		s = stems.to_a.first
+			s.oper "Satsuki", OPER_PASS
+	end
+
 
 	def did_receive_private_message(stem, sender, msg)
 		match = msg.match(/enter (.+) (.+) (.+)/i) #enter <channel> <user> <pass>
