@@ -28,17 +28,21 @@ class Controller < Autumn::Leaf
 			stem.privmsg(sender[:nick], "Invalid irckey")
 			return
 		end
-
-		channels = Channel.all(:level.lte => user.permission.level).map { |c| c.channel } 
 		
-		if !channels.include?(match[1].downcase)
-			stem.privmsg(sender[:nick], "Access denied")
-			return
-		end
-
 		stem.chgident(sender[:nick], user.id.to_s)
 		stem.chghost(sender[:nick], "#{user.username}.#{user.permission.name.gsub(" ", "")}.AnimeBytes")
-		stem.sajoin(sender[:nick], match[1].downcase)
+
+		channels = Channel.all(:level.lte => user.permission.level).map { |c| c.channel } 
+	
+		want_join = match[1].downcase.split(",").map {|m| m.strip }
+		for i in want_join
+			if !channels.include?(i)
+				stem.privmsg(sender[:nick], "Access denied for #{i}")
+			else
+				stem.sajoin(sender[:nick], i)
+			end
+		end
+
 	end
 
 	def user_command(stem, sender, reply_to, msg)
