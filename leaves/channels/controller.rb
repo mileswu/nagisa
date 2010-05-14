@@ -37,7 +37,7 @@ class Controller < Autumn::Leaf
 		end
 
 		stem.chgident(sender[:nick], user.id.to_s)
-		stem.chghost(sender[:nick], "#{user.username}.#{user.permission.name}.AnimeBytes")
+		stem.chghost(sender[:nick], "#{user.username}.#{user.permission.name.gsub(" ", "")}.AnimeBytes")
 		stem.sajoin(sender[:nick], match[1])
 	end
 
