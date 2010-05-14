@@ -36,7 +36,7 @@ class Channel
 	include DataMapper::Resource
 	storage_names[:animebytes] = "irc_channels"
 
-	property :channel, String
+	property :channel, String, :key => true
 	property :level, Integer
 end
 
