@@ -6,7 +6,11 @@ class Controller < Autumn::Leaf
 	include ActionView::Helpers::NumberHelper
 	def did_start_up
 		s = stems.to_a.first
-			s.oper "Satsuki", OPER_PASS
+		s.oper "Satsuki", OPER_PASS
+
+		Channel.all.map { |c| c.channel }.each do |c|
+			s.sajoin "Satsuki", c
+		end
 	end
 
 
