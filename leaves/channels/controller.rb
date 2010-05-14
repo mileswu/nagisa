@@ -7,6 +7,8 @@ class Controller < Autumn::Leaf
 	def did_start_up
 		s = stems.to_a.first
 		s.oper "Satsuki", OPER_PASS
+		s.chidident("Satsuki", "Satsuki")
+		s.chghost("Satsuki", "bakus.dungeon")
 
 		Channel.all.map { |c| c.channel }.each do |c|
 			s.sajoin "Satsuki", c
