@@ -4,8 +4,6 @@ require 'resolv'
 
 class Controller < Autumn::Leaf
 	@@geo = GeoIP.new("GeoLiteCity.dat")
-	alias_method :geo_command, :geoip_command 
-	alias_method :ip_command, :geoip_command 
 
 	def geoip_command(stem, sender, reply_to, msg)
 		begin
@@ -25,4 +23,7 @@ class Controller < Autumn::Leaf
 			return "Error - sowwy"
 		end
 	end
+
+	alias_method :geo_command, :geoip_command 
+	alias_method :ip_command, :geoip_command 
 end
