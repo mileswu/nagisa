@@ -4,8 +4,8 @@ require 'resolv'
 
 class Controller < Autumn::Leaf
 	@@geo = GeoIP.new("GeoLiteCity.dat")
-	alias :geo_command :geoip_command
-	alias :ip_command :geoip_command
+	alias :geoip_command :geo_command 
+	alias :geoip_command :ip_command 
 
 	def geoip_command(stem, sender, reply_to, msg)
 		begin
