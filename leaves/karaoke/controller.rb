@@ -37,10 +37,10 @@ class Controller < Autumn::Leaf
 		  r2 = i.match(/\[offset:(\d+)\]/)
 		  if r and r[1] and r[2] and r[3]
 			  time = r[1].to_i*60 + r[2].to_f
-			  l = r[3].force_encoding("UTF-8")
+			  l = r[3] #.force_encoding("UTF-8")
 
 			  timecodes << {:time => time, :line => l}
-		  elsif r2 and r2[1]
+1		  elsif r2 and r2[1]
 			  offset += r2[1].to_f #+ve means up
 		  end
 	  end
@@ -50,7 +50,7 @@ class Controller < Autumn::Leaf
 	  timecodes.delete_if { |a| a[:time] < 0 }
 
 	  to_translate = []
-	  regex = ORegexp.new('\p{^ASCII}', 'i', 'utf8')
+	  regex = Oniguruma::ORegexp.new('\p{^ASCII}', 'i', 'utf8')
 	  timecodes.each_with_index do |i,j|
 		  if regex.match(i[:line])
 			  to_translate << {:index => j, :line => i[:line] }

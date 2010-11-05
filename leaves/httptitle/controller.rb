@@ -14,12 +14,12 @@ class Controller < Autumn::Leaf
 	  return if(args[:channel].nil?)
 	  return if sender[:nick] and (sender[:nick] == "Nanoka" or sender[:nick] == "Satsuki" or sender[:nick] == "Momiji")
 
-	  youtube(stem, sender, args) #Youtube
+	  #youtube(stem, sender, args) #Youtube
 	  wasABlink = yuki_convert(stem, sender, args) #HTTP<->HTTPS AB
 	  
 	  if(!wasABlink)
 		title = httptitle(stem, sender, args)
-		screenshot(stem, sender, args, title)
+		#screenshot(stem, sender, args, title)
 	  end
 	  
 	  
@@ -132,7 +132,7 @@ private
 		 m = extract[0]["<title>".length..-"</title>".length-1].gsub("\t", "").gsub("\n","").gsub("\r","")
 		 coder = HTMLEntities.new
 		 m = coder.decode(m)
-		 stem.privmsg "#{args[:channel]} Title -> #{m}" unless dontprint
+		 stem.privmsg "#{args[:channel]}", "Title -> #{m}" unless dontprint
 		 return m
 	 end
 	end
@@ -183,13 +183,13 @@ private
 	res = args[:message].match(/http:\/\/animebyt\.es\/[^\s]*/ix)
 	if res and res[0]
 	  str = "SSLified: https://yuki.animebyt.es/" + res[0]["http://animebyt.es/".length..-1]
-	  stem.privmsg "#{args[:channel]} #{str}" unless u.include? "Nanoka"
+	  stem.privmsg(args[:channel], str) unless u.include? "Nanoka"
 	  return true
 	end
 	res = args[:message].match(/https:\/\/yuki\.animebyt\.es\/[^\s]*/ix)
 	if res and res[0]
 	  str = "Non-SSL: http://animebyt.es/" + res[0]["https://yuki.animebyt.es/".length..-1]
-	  stem.privmsg "#{args[:channel]} #{str}" unless u.include? "Nanoka"
+	  stem.privmsg(args[:channel], str) unless u.include? "Nanoka"
 	  return true
 	end
 	return false

@@ -542,9 +542,9 @@ module Autumn
 
             # Try to report the error if possible
             if @detailed_errors
-              message("Listener #{listener.class.to_s} raised an exception responding to #{meth}: " + $!.to_s) rescue nil
+              #message("Listener #{listener.class.to_s} raised an exception responding to #{meth}: " + $!.to_s) rescue nil
             else
-              message("Listener #{listener.class.to_s} raised an exception -- check the logs for details.") rescue nil
+              #message("Listener #{listener.class.to_s} raised an exception -- check the logs for details.") rescue nil
             end
           end
         end

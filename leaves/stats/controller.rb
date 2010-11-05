@@ -8,7 +8,16 @@ class Controller < Autumn::Leaf
 	def initialize(*args)
 		super
 
-		Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), {"action" => "clear", "auth" => AUTH}
+		begin
+			Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), {"action" => "clear", "auth" => AUTH}
+		rescue Timeout::Error
+			Thread.new do
+				sleep 30
+				initialize
+			end
+			return
+		end
+			 
 		@stats = {}
 		Thread.abort_on_exception = true
 		Thread.new do
@@ -86,6 +95,10 @@ class Controller < Autumn::Leaf
 		end
 		begin
 			Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), {"action" => "status", "uid" => uid, "online" => (event == :join ? "1" : "0"), "auth" => AUTH}
+		rescue Timeout::Error
+			puts "HTTP timed out"
+			sleep 30
+			update_state(uid, event)
 		rescue
 			puts "HTTP failed"
 			sleep 30
@@ -110,6 +123,8 @@ class Controller < Autumn::Leaf
 		puts out.to_json
 		begin
 			Net::HTTP.post_form URI.parse("http://animebyt.es/irc-notifier.php"), { "stats" => out.to_json, "auth" => AUTH, "action" => "stats" }
+		rescue Timeout::Error
+			puts "HTTP timed out"
 		rescue
 			puts "HTTP failed"
 		end

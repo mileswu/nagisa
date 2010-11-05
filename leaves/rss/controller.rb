@@ -13,7 +13,7 @@ class Controller < Autumn::Leaf
 			get_rss('first')
 			while 1
 				get_rss
-				sleep 5
+				sleep 60
 			end
 		end
 	end
@@ -31,6 +31,7 @@ class Controller < Autumn::Leaf
 			return		
 		end
 
+		count = 0
 		doc.search("item") do |e|
 			hsh = e.at("title").inner_text + e.at("pubdate").inner_text
 			if(!@done.include?(hsh))
@@ -38,12 +39,21 @@ class Controller < Autumn::Leaf
 				url = e.at("comments").inner_text
 				text = e.at("title").inner_text + " || " + url + " || " + url.sub("http://", "https://yuki.")
 				if mode == false
-					stems.each do |s|
-						s.privmsg("#announce", text) if s.server == "irc.animebyt.es"
+					if false #text['CD']
+						count += 1
+					else
+						stems.each do |s|
+							s.privmsg("#announce", text) if s.server == "irc.animebyt.es"
+						end
 					end
 				end
 			end
 		end
+		if count > 0
+			stems.each do |s|
+				s.privmsg("#announce", "#{count} CDs were uploaded") if s.server == "irc.animebyt.es"
+			end
+		end					
 	end
 
 end

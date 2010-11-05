@@ -3,6 +3,7 @@ Httptitle:
   class: Httptitle
 Control:
   class: Control
+  respond_to_private_messages: true
 Bash:
   class: Bash
 ThreadNecro:
