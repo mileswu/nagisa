@@ -12,7 +12,7 @@ class Controller < Autumn::Leaf
 
   def irc_privmsg_event(stem, sender, args)
 	  return if(args[:channel].nil?)
-	  return if sender[:nick] and (sender[:nick] == "Nanoka" or sender[:nick] == "Satsuki" or sender[:nick] == "Momiji")
+	  return if sender[:nick] and (sender[:nick] == "Nanoka" or sender[:nick] == "Satsuki" or sender[:nick] == "Momiji" or sender[:nick] == "godzilla" or sender[:nick] == "Internets")
 
 	  #youtube(stem, sender, args) #Youtube
 	  wasABlink = yuki_convert(stem, sender, args) #HTTP<->HTTPS AB
