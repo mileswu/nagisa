@@ -130,7 +130,13 @@ module Autumn
       rescue Errno::ENOENT
         raise "controller.rb file for leaf #{type} not found"
       end
-      config.leaf(type, :module).module_eval controller_code, controller_file.realpath.to_s
+      begin
+        config.leaf(type, :module).module_eval controller_code, controller_file.realpath.to_s
+      rescue SyntaxError => se
+	puts se
+        puts controller_file
+        raise
+      end
     end
 
     def load_leaf_helpers(type)

@@ -6,20 +6,11 @@ Control:
   respond_to_private_messages: true
 Bash:
   class: Bash
-ThreadNecro:
-  class: ThreadNecro
 Radio:
   class: Radio
 Karaoke:
   class: Karaoke
 Exec:
   class: Exec
-Stats:
-  class: Stats
-RSS:
-  class: RSS
-Channels:
-  class: Channels
-  database: :animebytes
 Geoip:
   class: Geoip

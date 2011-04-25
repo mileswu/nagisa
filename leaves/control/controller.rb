@@ -18,10 +18,6 @@ class Controller < Autumn::Leaf
   end
  
   # Typing "!about" displays some basic information about this leaf.
-  def satsuki_command(stem, sender, reply_to, msg)
-          puts "hi"
-          stem.privmsg "Satsuki enter #Animebyt.es delamoo #{SATSUKI_PASS}"
-  end
 
   def hello_command(stem, sender, reply_to, msg)
      "Hello world"
