@@ -14,7 +14,7 @@ class Controller < Autumn::Leaf
 	  return if(args[:channel].nil?)
 	  return if sender[:nick] and (sender[:nick] == "Nanoka" or sender[:nick] == "Satsuki" or sender[:nick] == "Momiji" or sender[:nick] == "godzilla" or sender[:nick] == "Internets")
 
-	  #youtube(stem, sender, args) #Youtube
+	  return if youtube(stem, sender, args) #Youtube
 	  wasABlink = yuki_convert(stem, sender, args) #HTTP<->HTTPS AB
 	  
 	  if(!wasABlink)
@@ -74,7 +74,7 @@ private
 	end
 	return false
   end
-  
+
   def httptitle(stem, sender, args)
 	res = args[:message].match(/(http|https):\/\/[^\s]*/ix)
 	return unless res and res[0]
@@ -140,35 +140,27 @@ private
   end
   
   def youtube(stem, sender, args)
-	res = args[:message].match(/http:\/\/(www.)?youtube[^\s]*/ix)
-	if res and res[0]
+	res = args[:message].match(/http:\/\/(www.)?youtube.com\/watch\?v=([^\s]*)/ix)
+	if res and res[2]
+		video_id = res[2]
 		begin
-			curb = Curl::Easy.new(res[0])
+			curb = Curl::Easy.new("http://gdata.youtube.com/feeds/api/videos/" + video_id)
 			curb.http_get
 			str = curb.body_str
 
 			h = Hpricot(str)
 
-			pos = h.search(".ratingL")
-			rating = (pos and pos[0]) ? "Rating: #{pos[0]["title"]}, " : ""
+			pos = h.search("yt:statistics")
+			view_count = (pos and pos[0] and pos[0]['viewcount']) ? "Views: #{pos[0]['viewcount']}, " : ""
 
-			pos = h.search("#watch-view-count")
-			view_count = (pos and pos[0]) ? "Views: #{pos.inner_text}, " : ""
+			pos = h.search("yt:duration")
+			length = (pos and pos[0] and pos[0]['seconds']) ? "Length: #{pos[0]['seconds'].to_i/60}:#{pos[0]['seconds'].to_i%60}" : ""
 
-			pos = str.match(/\"length_seconds\": \"(.*?)\"/)
-			length = (pos and pos[1]) ? "Length: #{pos[1].to_i/60}:#{pos[1].to_i%60}" : ""
+			pos = h.search("media:title")
+			title = (pos and pos[0]) ? "Title: #{pos[0].inner_text}, ": ""
 
-			pos = h.search(".description")
-			description = (pos and pos[0]) ? "Description: #{pos[0].inner_text.split(//u)[0..100].join("")}, ": ""
-			description = description.gsub("\n", " ").gsub("\t", " ")
-			description = ""
-
-			m = "#{description}#{rating}#{view_count}#{length}"
-			f = File.open("g.txt", "r+")
-			f.puts m
-			f.close
-
-			stem.privmsg "#{args[:channel]} #{m}"
+			m = "#{title}#{view_count}#{length}"
+			stem.privmsg args[:channel], m
 		rescue => e
 			puts "CURL err #{e}"
 		end
