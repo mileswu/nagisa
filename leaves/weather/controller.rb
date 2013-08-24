@@ -17,7 +17,7 @@ class Controller < Autumn::Leaf
 			end
 		end
 
-                if msg.nil?
+                if msg.nil? or msg == ""
                    if @storage[sender[:nick]]
                        msg = @storage[sender[:nick]]
                    else

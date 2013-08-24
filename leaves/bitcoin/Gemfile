@@ -1,0 +1,3 @@
+group :bitcoin do
+  gem 'json'
+end

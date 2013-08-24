@@ -1,0 +1,3 @@
+group :geoip do
+  gem 'geoip'
+end

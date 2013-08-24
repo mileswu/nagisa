@@ -1,0 +1,3 @@
+group :bash do
+  gem 'hpricot'
+end

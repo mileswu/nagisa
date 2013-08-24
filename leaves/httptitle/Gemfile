@@ -1,0 +1,7 @@
+group :httptitle do
+  gem 'curb'
+  gem 'hpricot'
+  gem 'escape'
+  gem 'htmlentities'
+  gem 'idn-ruby'
+end
