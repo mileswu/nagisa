@@ -1,6 +1,6 @@
 # Controller for the Weather leaf.
 require 'open-uri'
-require 'hpricot'
+require 'nokogiri'
 require 'cgi'
 require 'yaml'
 
@@ -24,29 +24,42 @@ class Controller < Autumn::Leaf
                        return "No past location stored."
                    end
                 end
-                   
-		doc = open("http://www.google.com/ig/api?weather=" + CGI::escape(msg)) { |f| Hpricot(f) }
-		
-		if doc.at('city').nil?
-			return "Not found"
-		end
-		city = doc.at('city')['data']
 
+			doc = Nokogiri::HTML(open("http://where.yahooapis.com/v1/places.q(" + CGI::escape(msg) + ")?appid=_NjDJJ_V34EcKptv9R8wyfOEb7npjCytjQb9b2DZQ1eYbwa2JItdjW85XZt0aw--"))
+
+			if doc.css('woeid').empty?
+					return "Not found"
+			end
+			woeid = doc.css('woeid')[0].content
+
+                   
 		@storage[sender[:nick]] = msg
 		File.open('weather.yml', 'w') { |out| YAML.dump(@storage, out) }
 
+		doc = Nokogiri::HTML(open("http://weather.yahooapis.com/forecastrss?w=#{woeid}&u=c"))
+
+		city = ''
+		if doc.css("title").size > 0
+			  city = doc.css("title")[0].content.sub("Yahoo! Weather - ", "")
+		end 
+
 		s = {}
 		s2 = {}
-		s[:condition] = doc.at('current_conditions').at('condition')
-		s[:f] = doc.at('current_conditions').at('temp_f')
-		s[:c] = doc.at('current_conditions').at('temp_c')
-		s[:humidity] = doc.at('current_conditions').at('humidity')
-		s[:wind] = doc.at('current_conditions').at('wind_condition')
-		s.each_pair do |k,i|
-			s2[k] = (i ? i['data']: '')
+		if doc.css("condition").size > 0
+			  s[:condition] = doc.css("condition")[0]['text']
+				  s[:c] = doc.css("condition")[0]['temp']
 		end
-	
-		return "#{city}: #{s2[:condition]}, #{s2[:c]}C, #{s2[:wind]}, #{s2[:humidity]}"
+		if doc.css("atmosphere").size > 0
+			  s[:humidity] = doc.css("atmosphere")[0]['humidity']
+		end
+		if doc.css("wind").size > 0
+			  if doc.css('wind')[0]['speed']
+					    s[:wind] = doc.css('wind')[0]['speed'].to_f.round()
+							  end
+		end
+
+		return "#{city}: #{s[:condition]} #{s[:c]}C, #{s[:wind]} km/hr wind, #{s[:humidity]}% humidity"
+
 		
 	end
 end

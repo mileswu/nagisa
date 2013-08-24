@@ -14,3 +14,9 @@ Exec:
   class: Exec
 Geoip:
   class: Geoip
+Bans:
+  class: Bans
+Weather:
+  class: Weather
+Bitcoin:
+  class: Bitcoin

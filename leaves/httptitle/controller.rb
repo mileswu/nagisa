@@ -140,9 +140,9 @@ private
   end
   
   def youtube(stem, sender, args)
-	res = args[:message].match(/http:\/\/(www.)?youtube.com\/watch\?v=([^\s]*)/ix)
-	if res and res[2]
-		video_id = res[2]
+	res = args[:message].match(/http:\/\/(www.)?youtube.com\/watch\?(.*)v=([^\s]*)/ix)
+	if res and res[3]
+		video_id = res[3]
 		begin
 			curb = Curl::Easy.new("http://gdata.youtube.com/feeds/api/videos/" + video_id)
 			curb.http_get
