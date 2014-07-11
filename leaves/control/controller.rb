@@ -1,7 +1,7 @@
 # Controller for the Control leaf.
 
 class Controller < Autumn::Leaf
-	require 'config'
+#	require 'config'
   def commands_command(stem, sender, reply_to, msg)
   end
 
