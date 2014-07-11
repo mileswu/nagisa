@@ -1,0 +1,8 @@
+check process irc with pidfile "/home/nagisa/pid"
+        start program = "/sbin/start-stop-daemon -S -p /home/nagisa/pid -u user -d /home/nagisa -m -b --exec /usr/local/bin/ruby -- script/server"
+        stop program = "/sbin/start-stop-daemon -K -p /home/nagisa/pid"
+        mode active
+        if 2 restarts within 5 cycles then stop
+
+check file irclog with path /home/nagisa/log/testing.log
+        if timestamp > 10 minutes then exec "/usr/bin/monit restart irc"
